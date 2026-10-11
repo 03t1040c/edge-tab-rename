@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tab Trim の設定</title>
+  <link rel="icon" href="assets/icons/icon-32.png">
+  <link rel="stylesheet" href="options.css">
+  <script src="rules.js" defer></script>
+  <script src="options.js" defer></script>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="brand"><img src="assets/icons/icon-48.png" width="48" height="48" alt=""><div><h1>Tab Trim</h1><p>タブのタイトルを、すっきり。</p></div></div>
+      <label class="switch"><input type="checkbox" id="enabled" checked> タイトルの短縮を有効にする</label>
+    </header>
+    <div class="workspace">
+      <section class="card editor" aria-labelledby="words-heading">
+        <div class="section-top"><span class="eyebrow">REMOVE WORDS</span><span id="rule-count" class="count">0 件</span></div>
+        <h2 id="words-heading">消したい言葉を登録</h2>
+        <p class="muted">登録した文字列を、タブのタイトルから取り除きます。</p>
+        <form id="rule-form">
+          <label for="word">不要ワード</label>
+          <input id="word" type="text" placeholder="例：長いサイト名" autocomplete="off" spellcheck="false" required maxlength="2048">
+          <details id="scope-details"><summary>適用するURLを限定する <span>任意</span></summary><div class="details-body">
+            <label for="scope">対象URL</label>
+            <input id="scope" type="url" placeholder="https://example.sharepoint.com/sites/sales/" autocomplete="off">
+            <p class="help">このURLと配下のページに適用。空欄なら、すべてのサイトが対象です。</p>
+          </div></details>
+          <div class="form-actions"><button type="submit" id="add-rule" class="primary">追加する</button><button type="button" id="cancel-edit" hidden>編集をやめる</button><span class="help">追加・変更は自動保存</span></div>
+        </form>
+        <p id="status" role="status" aria-live="polite"></p>
+        <div id="rules-list"></div>
+        <div id="empty" class="empty"><span class="empty-mark">−</span><p>まずは、消したい言葉をひとつ。</p><p class="help">URLなどの条件を設定する必要はありません。</p></div>
+      </section>
+      <section class="card preview" aria-labelledby="preview-heading">
+        <div class="section-top"><span class="eyebrow">LIVE PREVIEW</span><span class="preview-indicator">入力に合わせて更新</span></div>
+        <h2 id="preview-heading">どう短くなる？</h2>
+        <p class="muted">追加する前のワードも、ここで試せます。</p>
+        <label for="tab-select">開いているタブから読み込む</label>
+        <div class="tab-picker"><select id="tab-select"><option value="">タイトルを手入力して試す</option></select><button type="button" id="refresh-tabs" title="タブの一覧とタイトルを更新">更新</button></div>
+        <p id="tab-status" class="help" role="status"></p>
+        <label for="sample-title">テストするタイトル</label>
+        <textarea id="sample-title" rows="3" spellcheck="false">株式会社○○ 情報共有ポータル - 月次報告</textarea>
+        <button type="button" id="selection-word" class="selection-button" disabled>選択した文字を不要ワードにする</button>
+        <label for="sample-url">テストするページのURL <span class="optional">URL条件がある場合</span></label>
+        <input id="sample-url" type="url" placeholder="https://example.sharepoint.com/sites/sales/" spellcheck="false">
+        <label class="space-toggle"><input type="checkbox" id="show-spaces" checked> 半角・全角スペースを見えるようにする</label>
+        <div class="preview-block"><div class="preview-label">変更前 <span>消える部分をハイライト</span></div><div id="before" class="title-view"></div></div>
+        <div class="preview-block after-block"><div class="preview-label">変更後</div><div id="after" class="title-view"></div></div>
+        <p id="match-status" class="match-status" aria-live="polite"></p>
+        <p class="help">空白の印は表示用です。入力したスペースはそのまま保存します。</p>
+      </section>
+    </div>
+    <footer>設定はこの端末内に保存します。タイトルやURLを外部へ送信しません。<a href="privacy.html" target="_blank" rel="noopener">プライバシーについて</a></footer>
+  </main>
+</body>
+</html>

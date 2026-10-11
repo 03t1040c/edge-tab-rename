@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "Tab Trim — タブタイトルをすっきり",
+  "version": "1.0.1",
+  "author": "Yumoto",
+  "description": "不要ワードを登録するだけでタブのタイトルから削除。空白が見えるプレビューと、必要なときだけ使えるURL指定に対応。",
+  "permissions": ["storage", "scripting", "webNavigation"],
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [{
+    "matches": ["http://*/*", "https://*/*"],
+    "js": ["rules.js", "content.js"],
+    "run_at": "document_start",
+    "all_frames": false
+  }],
+  "options_ui": { "page": "options.html", "open_in_tab": true },
+  "action": {
+    "default_title": "Tab Trim の設定を開く",
+    "default_icon": {
+      "16": "assets/icons/icon-16.png",
+      "32": "assets/icons/icon-32.png"
+    }
+  },
+  "icons": {
+    "16": "assets/icons/icon-16.png",
+    "32": "assets/icons/icon-32.png",
+    "48": "assets/icons/icon-48.png",
+    "128": "assets/icons/icon-128.png"
+  },
+  "commands": {
+    "open-settings": { "description": "Tab Trim の設定を開く" }
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'"
+  }
+}
