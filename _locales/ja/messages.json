@@ -1,0 +1,14 @@
+{
+  "extensionName": {
+    "message": "Tab Trim — タブタイトルをすっきり",
+    "description": "Extension name shown in Microsoft Edge and the store."
+  },
+  "extensionDescription": {
+    "message": "不要ワードを登録するだけでタブのタイトルから削除。空白が見えるプレビューと、必要なときだけ使えるURL指定に対応。",
+    "description": "Short description shown in the store."
+  },
+  "openSettings": {
+    "message": "Tab Trim の設定を開く",
+    "description": "Toolbar action title and keyboard shortcut description."
+  }
+}

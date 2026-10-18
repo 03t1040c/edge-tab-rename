@@ -27,6 +27,16 @@ async function main() {
     const worker = context.serviceWorkers()[0] || await context.waitForEvent('serviceworker', { timeout: 15000 });
     const extensionId = new URL(worker.url()).hostname;
     console.log('Real Edge extension loaded: ' + extensionId);
+    await check('Japanese manifest messages resolve in Edge', async () => {
+      const metadata = await worker.evaluate(() => ({
+        manifest: chrome.runtime.getManifest(),
+        message: chrome.i18n.getMessage('extensionName')
+      }));
+      assert.equal(metadata.manifest.default_locale, 'ja');
+      assert.equal(metadata.manifest.name, 'Tab Trim — タブタイトルをすっきり');
+      assert.equal(metadata.message, metadata.manifest.name);
+      assert.equal(metadata.manifest.action.default_title, 'Tab Trim の設定を開く');
+    });
     const settings = { enabled: true, rules: [{ id: 'one', word: 'Long Site - ', url: '', enabled: true }] };
     await worker.evaluate(value => chrome.storage.local.set({ settings: value }), settings);
     const page = await context.newPage();
