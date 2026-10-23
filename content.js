@@ -1,6 +1,8 @@
 (function () {
   "use strict";
-  if (globalThis.__tabTrimInstalled) return;
+  // Reinjection after an extension update must retire the previous observer and
+  // storage listeners. A boolean guard leaves a stale controller running forever.
+  globalThis.__tabTrimController?.dispose();
   globalThis.__tabTrimInstalled = true;
   const api = globalThis.TabTrimRules;
   let config = api.normalize(null);
@@ -17,6 +19,8 @@
   let pendingTitleChange = false;
   let renderedNode = null;
   let settingsRevision = 0;
+  const controller = { dispose };
+  globalThis.__tabTrimController = controller;
 
   const titleObserver = new MutationObserver(() => {
     pendingTitleChange = true;
@@ -66,6 +70,9 @@
   }
   function refresh() {
     if (disposed) return;
+    try {
+      if (!chrome.runtime?.id) { dispose(); return; }
+    } catch { dispose(); return; }
     const current = document.title;
     const currentNode = document.head?.querySelector("title") ?? null;
     if (renderedTitle === null || current !== renderedTitle || pendingTitleChange ||
@@ -111,15 +118,25 @@
     if (document.visibilityState === "visible") refresh();
   }
   function dispose() {
+    if (disposed) return;
     disposed = true;
     if (timer !== null) clearTimeout(timer);
+    const pageChangedTitle = pendingTitleChange || titleObserver.takeRecords().length > 0 ||
+      (document.head?.querySelector("title") ?? null) !== renderedNode;
     disconnect();
-    chrome.storage.onChanged.removeListener(storageChanged);
-    chrome.runtime.onMessage.removeListener(messageReceived);
+    // Leave the newest page-supplied title in place; restore only our own output.
+    if (!pageChangedTitle && renderedTitle !== null && document.title === renderedTitle) document.title = rawTitle;
+    // The old extension context can already be invalid during reload/disable.
+    try { chrome.storage.onChanged.removeListener(storageChanged); } catch { /* Invalidated context. */ }
+    try { chrome.runtime.onMessage.removeListener(messageReceived); } catch { /* Invalidated context. */ }
     window.removeEventListener("popstate", refresh);
     window.removeEventListener("hashchange", refresh);
     window.removeEventListener("pageshow", refresh);
     document.removeEventListener("visibilitychange", visibilityChanged);
+    if (globalThis.__tabTrimController === controller) {
+      delete globalThis.__tabTrimController;
+      delete globalThis.__tabTrimInstalled;
+    }
   }
   chrome.storage.onChanged.addListener(storageChanged);
   chrome.runtime.onMessage.addListener(messageReceived);

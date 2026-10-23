@@ -1,8 +1,10 @@
 # Microsoft Edge Add-ons 申請資料
 
-対象バージョン：1.0.2 ／ 公開者名：Yumoto ／ 確認日：2026年10月18日
+対象バージョン：1.0.3 ／ 公開者名：Yumoto ／ 確認日：2026年10月23日
 
 操作手順は [PUBLISH.md](PUBLISH.md)、申請欄への転記用テキストは `store-assets/partner-center-inputs-ja.txt` を参照してください。
+
+最終チェック結果と不具合修正は `FINAL-CHECK.md` を参照してください。
 
 ## 今回の申請用変更
 
@@ -23,7 +25,7 @@
 
 | 申請項目 | ファイル／設定 |
 | --- | --- |
-| 拡張機能パッケージ | `dist/tab-trim-1.0.2.zip` |
+| 拡張機能パッケージ | `dist/tab-trim-1.0.3.zip` |
 | 対象言語 | 日本語。現時点の画面・説明は日本語のみ |
 | 名前 | Tab Trim — タブタイトルをすっきり |
 | 短い説明 | `_locales/ja/messages.json` のextensionDescriptionから反映 |

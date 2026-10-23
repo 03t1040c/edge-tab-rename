@@ -13,7 +13,7 @@
   <main>
     <header>
       <div class="brand"><img src="assets/icons/icon-48.png" width="48" height="48" alt=""><div><h1>Tab Trim</h1><p>タブのタイトルを、すっきり。</p></div></div>
-      <label class="switch"><input type="checkbox" id="enabled" checked> タイトルの短縮を有効にする</label>
+      <label class="switch"><input type="checkbox" id="enabled" checked disabled> タイトルの短縮を有効にする</label>
     </header>
     <div class="workspace">
       <section class="card editor" aria-labelledby="words-heading">
@@ -22,13 +22,13 @@
         <p class="muted">登録した文字列を、タブのタイトルから取り除きます。</p>
         <form id="rule-form">
           <label for="word">不要ワード</label>
-          <input id="word" type="text" placeholder="例：長いサイト名" autocomplete="off" spellcheck="false" required maxlength="2048">
+          <input id="word" type="text" placeholder="例：長いサイト名" autocomplete="off" spellcheck="false" required maxlength="2048" disabled>
           <details id="scope-details"><summary>適用するURLを限定する <span>任意</span></summary><div class="details-body">
             <label for="scope">対象URL</label>
-            <input id="scope" type="url" placeholder="https://example.sharepoint.com/sites/sales/" autocomplete="off">
+            <input id="scope" type="url" placeholder="https://example.sharepoint.com/sites/sales/" autocomplete="off" disabled>
             <p class="help">このURLと配下のページに適用。空欄なら、すべてのサイトが対象です。</p>
           </div></details>
-          <div class="form-actions"><button type="submit" id="add-rule" class="primary">追加する</button><button type="button" id="cancel-edit" hidden>編集をやめる</button><span class="help">追加・変更は自動保存</span></div>
+          <div class="form-actions"><button type="submit" id="add-rule" class="primary" disabled>追加する</button><button type="button" id="cancel-edit" hidden disabled>編集をやめる</button><span class="help">追加・変更は自動保存</span></div>
         </form>
         <p id="status" role="status" aria-live="polite"></p>
         <div id="rules-list"></div>

@@ -4,8 +4,15 @@ const $ = id => document.getElementById(id);
 let settings = api.normalize(null);
 let editId = null;
 let saving = false;
+let initialized = false;
+let settingsRevision = 0;
 let tabs = [];
 let previewRequest = 0;
+
+function updateMutationControls() {
+  document.querySelectorAll('#rule-form input, #rule-form button, #enabled, #rules-list input, #rules-list button')
+    .forEach(control => { control.disabled = !initialized || saving; });
+}
 
 function status(message, error = false) {
   $("status").textContent = message;
@@ -67,7 +74,7 @@ function renderRules() {
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = rule.enabled;
-    checkbox.disabled = saving;
+    checkbox.disabled = !initialized || saving;
     checkbox.setAttribute("aria-label", `${rule.word} のルールを有効にする`);
     checkbox.addEventListener("change", () => save({ ...settings, rules: settings.rules.map(item =>
       item.id === rule.id ? { ...item, enabled: checkbox.checked } : item
@@ -86,7 +93,7 @@ function renderRules() {
     actions.className = "rule-actions";
     const edit = document.createElement("button");
     edit.type = "button";
-    edit.disabled = saving;
+    edit.disabled = !initialized || saving;
     edit.textContent = "編集";
     edit.setAttribute("aria-label", `${rule.word} を編集`);
     edit.addEventListener("click", () => {
@@ -102,7 +109,7 @@ function renderRules() {
     });
     const remove = document.createElement("button");
     remove.type = "button";
-    remove.disabled = saving;
+    remove.disabled = !initialized || saving;
     remove.textContent = "削除";
     remove.setAttribute("aria-label", `${rule.word} を削除`);
     remove.addEventListener("click", async () => {
@@ -124,10 +131,10 @@ function resetForm() {
   renderPreview();
 }
 async function save(next) {
+  if (!initialized) { status("設定の読み込みが完了するまでお待ちください。", true); return false; }
   if (saving) { status("保存中です。少しお待ちください。"); return false; }
   saving = true;
-  document.querySelectorAll('#rule-form input, #rule-form button, #enabled, #rules-list input, #rules-list button')
-    .forEach(control => { control.disabled = true; });
+  updateMutationControls();
   try {
     await chrome.storage.local.set({ settings: next });
     settings = api.normalize(next);
@@ -141,8 +148,7 @@ async function save(next) {
     return false;
   } finally {
     saving = false;
-    document.querySelectorAll('#rule-form input, #rule-form button, #enabled, #rules-list input, #rules-list button')
-      .forEach(control => { control.disabled = false; });
+    updateMutationControls();
   }
 }
 $("rule-form").addEventListener("submit", async event => {
@@ -150,6 +156,11 @@ $("rule-form").addEventListener("submit", async event => {
   const word = $("word").value;
   const url = $("scope").value.trim();
   if (!word.length) { status("消したいワードを入力してください。", true); return; }
+  if (word.length > 2048) { status("不要ワードは2048文字以内で入力してください。", true); return; }
+  if (editId && !settings.rules.some(rule => rule.id === editId)) {
+    status("編集していたルールは別の設定画面で削除されました。「編集をやめる」を押してから追加し直してください。", true);
+    return;
+  }
   if (!api.validScope(url)) { status("URLは https:// または http:// から入力してください。", true); return; }
   if (settings.rules.some(rule => rule.id !== editId && rule.word === word && rule.url === url)) {
     status("同じワードとURLのルールが登録されています。", true); return;
@@ -162,8 +173,16 @@ $("rule-form").addEventListener("submit", async event => {
 });
 $("cancel-edit").addEventListener("click", () => { resetForm(); status(""); });
 $("enabled").addEventListener("change", () => save({ ...settings, enabled: $("enabled").checked }));
-for (const id of ["word", "scope", "sample-title", "sample-url"]) {
+for (const id of ["word", "scope"]) {
   $(id).addEventListener("input", renderPreview);
+}
+for (const id of ["sample-title", "sample-url"]) {
+  $(id).addEventListener("input", () => {
+    ++previewRequest;
+    $("tab-select").value = "";
+    $("tab-status").textContent = "タイトルとURLを自由に入力して試せます。";
+    renderPreview();
+  });
 }
 $("show-spaces").addEventListener("change", () => { renderRules(); renderPreview(); });
 function selectionChanged() {
@@ -187,6 +206,7 @@ async function loadSelectedTab() {
   if (request !== previewRequest) return;
   $("sample-title").value = snapshot?.original ?? tab.title ?? "";
   $("sample-url").value = snapshot?.url ?? tab.url ?? "";
+  selectionChanged();
   $("tab-status").textContent = snapshot ? "短縮前のタイトルを読み込みました。" :
     "タブの表示タイトルを読み込みました。元タイトルを取得するには対象ページを再読み込みしてください。";
   renderPreview();
@@ -214,18 +234,24 @@ $("tab-select").addEventListener("change", () => {
 $("refresh-tabs").addEventListener("click", loadTabs);
 async function initialize() {
   try {
+    const revision = settingsRevision;
     const stored = await chrome.storage.local.get("settings");
-    settings = api.normalize(stored.settings);
+    if (settingsRevision === revision) settings = api.normalize(stored.settings);
+    initialized = true;
     renderRules();
+    updateMutationControls();
     renderPreview();
     await loadTabs();
   } catch { status("設定を読み込めませんでした。設定タブを開き直してください。", true); }
 }
 chrome.storage.onChanged.addListener((changes, area) => {
-  if (area === "local" && changes.settings && !saving) {
+  if (area === "local" && changes.settings) {
+    ++settingsRevision;
+    if (saving) return;
     settings = api.normalize(changes.settings.newValue);
     renderRules();
     renderPreview();
   }
 });
+updateMutationControls();
 initialize();

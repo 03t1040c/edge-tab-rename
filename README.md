@@ -39,10 +39,14 @@ Edge内部ページ、拡張機能ストアなどブラウザーが変更を禁�
 
 `node --test tests/rules.test.cjs` で文字列変換とURL条件を検証できます。ブラウザー検証にはPlaywrightが必要です。
 
-PowerShellから `.\tools\package.ps1` で `dist/tab-trim-1.0.2.zip` を作成します。パッケージには実行に必要なファイルだけを含みます。ビルドにはNode.jsを使用しますが、拡張機能の利用には不要です。
+PowerShellから `.\tools\package.ps1` で `dist/tab-trim-1.0.3.zip` を作成します。パッケージには実行に必要なファイルだけを含みます。ビルドにはNode.jsを使用しますが、拡張機能の利用には不要です。
 
 公開用のプライバシーポリシーHTMLは `node tools/prepare-store.cjs` で `store-assets/privacy.html` と `docs/privacy.html` に生成します。GitHub Pagesはmainブランチの `/docs` を公開対象にできます。申請用の画像・説明・審査用メモは `store-assets/` にあります。
 
 `node tools/check-release.cjs` で日本語の掲載情報・依存ファイル・画像サイズ・ポリシーの一致を確認できます。パッケージ作成時にも自動実行します。
 
 Microsoft Edge Add-onsへの登録操作は `PUBLISH.md`、申請欄の説明と素材一覧は `STORE.md` を参照してください。実際のSPO環境での確認状況は、このプロジェクトの自動テスト結果とは別に判断してください。
+
+## 最終チェック（2026年10月23日）
+
+6件の不具合を修正し、単体・Edge実機の合計35件のテストが成功しました。詳細と更新手順は `FINAL-CHECK.md` を参照してください。1.0.2以前から更新する場合は、拡張機能と開いている対象ページを一度再読み込みしてください。

@@ -1,6 +1,6 @@
 # Microsoft Edge Add-onsへの登録手順
 
-対象：Tab Trim 1.0.2 ／ 公開者名：Yumoto ／ 更新日：2026年10月18日
+対象：Tab Trim 1.0.3 ／ 公開者名：Yumoto ／ 更新日：2026年10月23日
 
 ## 1. 今回の変更をGitHubへ反映する
 
@@ -43,10 +43,10 @@ Microsoft Edgeプログラムへの拡張機能登録料は無料です。すで
 
 1. Partner CenterのWorkspacesからMicrosoft Edgeを開く。
 2. 「Create new extension」を選ぶ。
-3. `dist/tab-trim-1.0.2.zip` をアップロードする。ZIPをさらに別のフォルダに包み直す必要はありません。
+3. `dist/tab-trim-1.0.3.zip` をアップロードする。ZIPをさらに別のフォルダに包み直す必要はありません。
 4. パッケージの検証が完了したらContinueを押す。
 
-以前の1.0.0／1.0.1のZIPは提出せず、今回の1.0.2を使用します。日本語の名前と説明は `_locales/ja/messages.json` から反映されます。
+以前の1.0.0／1.0.1／1.0.2のZIPは提出せず、今回の1.0.3を使用します。日本語の名前と説明は `_locales/ja/messages.json` から反映されます。
 
 ## 5. AvailabilityとPropertiesを入力する
 
